@@ -1,0 +1,953 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Radial velocity fitting with the Rossiter-McLaughlin effect &mdash; starry 1.0.0.dev1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="starry 1.0.0.dev1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> starry
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0.dev1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html"> Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html"> Examples &amp; tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html"> Python API</a></li>
+<li class="toctree-l1"><a class="reference external" href="html/index.html#://"> C++ API</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/rodluger/starry"> Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/rodluger/starry/issues"> Submit an issue</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://adsabs.harvard.edu/abs/2019AJ....157...64L"> Read the paper</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">starry</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">starry</a> &raquo;</li>
+      
+    
+      <li>Radial velocity fitting with the Rossiter-McLaughlin effect</li>
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 0;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial was generated from a Jupyter notebook that can be
+downloaded <a class="reference external" href="https://github.com/rodluger/starry/blob/master/docs/notebooks/RV+RM.ipynb">here</a>.</p>
+</div>
+<div class="section" id="Radial-velocity-fitting-with-the-Rossiter-McLaughlin-effect">
+<h1>Radial velocity fitting with the Rossiter-McLaughlin effect<a class="headerlink" href="#Radial-velocity-fitting-with-the-Rossiter-McLaughlin-effect" title="Permalink to this headline">¶</a></h1>
+<p>A work in progress!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format = &quot;retina&quot;
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">rcParams</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;text.usetex&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sans-serif&quot;</span><span class="p">]</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cmss10&quot;</span><span class="p">]</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pymc3</span> <span class="k">as</span> <span class="nn">pm</span>
+<span class="kn">import</span> <span class="nn">exoplanet</span> <span class="k">as</span> <span class="nn">exo</span>
+<span class="kn">import</span> <span class="nn">starry</span>
+<span class="kn">import</span> <span class="nn">theano</span>
+<span class="kn">import</span> <span class="nn">theano.tensor</span> <span class="k">as</span> <span class="nn">tt</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># True values</span>
+<span class="n">truths</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1">#</span>
+    <span class="c1"># Star</span>
+    <span class="c1">#</span>
+    <span class="s2">&quot;A_u&quot;</span><span class="p">:</span>        <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.26</span><span class="p">],</span>
+    <span class="s2">&quot;A_inc&quot;</span><span class="p">:</span>      <span class="mf">75.0</span><span class="p">,</span>         <span class="c1"># deg</span>
+    <span class="s2">&quot;A_obl&quot;</span><span class="p">:</span>      <span class="mf">30.0</span><span class="p">,</span>         <span class="c1"># deg</span>
+    <span class="s2">&quot;A_alpha&quot;</span><span class="p">:</span>    <span class="mf">0.40</span><span class="p">,</span>
+    <span class="s2">&quot;A_veq&quot;</span><span class="p">:</span>      <span class="mf">5300.0</span><span class="p">,</span>       <span class="c1"># m/s</span>
+    <span class="s2">&quot;A_m&quot;</span><span class="p">:</span>        <span class="mf">0.7</span><span class="p">,</span>          <span class="c1"># Solar</span>
+    <span class="s2">&quot;A_r&quot;</span><span class="p">:</span>        <span class="mf">1.0</span><span class="p">,</span>          <span class="c1"># Solar</span>
+    <span class="c1">#</span>
+    <span class="c1"># Planet b</span>
+    <span class="c1">#</span>
+    <span class="s2">&quot;b_period&quot;</span><span class="p">:</span>   <span class="mf">3.12</span><span class="p">,</span>         <span class="c1"># days</span>
+    <span class="s2">&quot;b_t0&quot;</span><span class="p">:</span>       <span class="mf">2.00</span><span class="p">,</span>         <span class="c1"># days</span>
+    <span class="s2">&quot;b_inc&quot;</span><span class="p">:</span>      <span class="mf">89.5</span><span class="p">,</span>         <span class="c1"># deg</span>
+    <span class="s2">&quot;b_ecc&quot;</span><span class="p">:</span>      <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s2">&quot;b_w&quot;</span><span class="p">:</span>        <span class="mf">70.0</span><span class="p">,</span>         <span class="c1"># deg</span>
+    <span class="s2">&quot;b_r&quot;</span><span class="p">:</span>        <span class="mf">0.02</span><span class="p">,</span>         <span class="c1"># Solar</span>
+    <span class="s2">&quot;b_m&quot;</span><span class="p">:</span>        <span class="mf">3e-5</span><span class="p">,</span>         <span class="c1"># Solar</span>
+    <span class="c1">#</span>
+    <span class="c1"># Dataset</span>
+    <span class="c1">#</span>
+    <span class="s2">&quot;tstart&quot;</span><span class="p">:</span>     <span class="mf">0.0</span><span class="p">,</span>          <span class="c1"># days</span>
+    <span class="s2">&quot;tend&quot;</span><span class="p">:</span>       <span class="mf">4.0</span><span class="p">,</span>          <span class="c1"># days</span>
+    <span class="s2">&quot;tcad&quot;</span><span class="p">:</span>       <span class="mf">1.</span><span class="o">/</span><span class="mf">24.</span><span class="o">/</span><span class="mf">60.</span><span class="p">,</span>   <span class="c1"># days</span>
+    <span class="s2">&quot;rv_err&quot;</span><span class="p">:</span>     <span class="mf">0.1</span>           <span class="c1"># m/s</span>
+<span class="p">}</span>
+
+<span class="c1"># Instantiate the starry `Map`</span>
+<span class="n">udeg</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_u&quot;</span><span class="p">])</span>
+<span class="nb">map</span> <span class="o">=</span> <span class="n">starry</span><span class="o">.</span><span class="n">DopplerMap</span><span class="p">(</span><span class="n">udeg</span><span class="o">=</span><span class="n">udeg</span><span class="p">)</span>
+<span class="nb">map</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_u&quot;</span><span class="p">]</span>
+<span class="nb">map</span><span class="o">.</span><span class="n">inc</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_inc&quot;</span><span class="p">]</span>
+<span class="nb">map</span><span class="o">.</span><span class="n">obl</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_obl&quot;</span><span class="p">]</span>
+<span class="nb">map</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_alpha&quot;</span><span class="p">]</span>
+<span class="nb">map</span><span class="o">.</span><span class="n">veq</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_veq&quot;</span><span class="p">]</span>
+
+<span class="c1"># Instantiate an `orbit` object</span>
+<span class="n">orbit</span> <span class="o">=</span> <span class="n">exo</span><span class="o">.</span><span class="n">orbits</span><span class="o">.</span><span class="n">KeplerianOrbit</span><span class="p">(</span>
+    <span class="n">period</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_period&quot;</span><span class="p">],</span>
+    <span class="n">t0</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_t0&quot;</span><span class="p">],</span>
+    <span class="n">incl</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_inc&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.</span><span class="p">,</span>
+    <span class="n">m_planet</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_m&quot;</span><span class="p">],</span>
+    <span class="n">m_star</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_m&quot;</span><span class="p">],</span>
+    <span class="n">r_star</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_r&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Compute the RV curve</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;tstart&quot;</span><span class="p">],</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;tend&quot;</span><span class="p">],</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;tcad&quot;</span><span class="p">])</span>
+<span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv_orbit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">get_radial_velocity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="c1"># Compute the R-M signature</span>
+<span class="c1"># To speed things up, only compute it in a window near transit,</span>
+<span class="c1"># so we don&#39;t waste time in Theano moving zeros around. (This</span>
+<span class="c1"># will matter a lot more when we do the sampling below.)</span>
+<span class="n">i_rm_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_t0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="n">i_rm_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_t0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="n">t_rm</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">i_rm_min</span><span class="p">:</span><span class="n">i_rm_max</span><span class="p">]</span>
+<span class="n">t_left</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:</span><span class="n">i_rm_min</span><span class="p">]</span>
+<span class="n">t_right</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">i_rm_max</span><span class="p">:]</span>
+<span class="n">rm_model_true</span> <span class="o">=</span> <span class="nb">map</span><span class="o">.</span><span class="n">rv_op</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t_rm</span><span class="p">,</span> <span class="n">orbit</span><span class="o">=</span><span class="n">orbit</span><span class="p">,</span> <span class="n">ro</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_r&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_r&quot;</span><span class="p">])</span>
+<span class="n">rm_model_true_full</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">tt</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_left</span><span class="p">)),</span> <span class="n">rm_model_true</span><span class="p">,</span> <span class="n">tt</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_right</span><span class="p">))])</span>
+<span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv_rm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rm_model_true_full</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="c1"># Join them and add noise</span>
+<span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv_orbit&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv_rm&quot;</span><span class="p">]</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv_err&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+
+<span class="c1"># Plot it</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">rv</span><span class="p">,</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">*</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [days]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;RV [m/s]&quot;</span><span class="p">);</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i_rm_min</span><span class="p">:</span><span class="n">i_rm_max</span><span class="p">],</span> <span class="n">rv</span><span class="p">[</span><span class="n">i_rm_min</span><span class="p">:</span><span class="n">i_rm_max</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i_rm_min</span><span class="p">:</span><span class="n">i_rm_max</span><span class="p">],</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv&quot;</span><span class="p">][</span><span class="n">i_rm_min</span><span class="p">:</span><span class="n">i_rm_max</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [days]&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<a class="reference internal image-reference" href="../_images/notebooks_RV+RM_4_0.png"><img alt="../_images/notebooks_RV+RM_4_0.png" src="../_images/notebooks_RV+RM_4_0.png" style="width: 1025px; height: 382px;" /></a>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">map</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<a class="reference internal image-reference" href="../_images/notebooks_RV+RM_5_0.png"><img alt="../_images/notebooks_RV+RM_5_0.png" src="../_images/notebooks_RV+RM_5_0.png" style="width: 292px; height: 279px;" /></a>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Define our model</span>
+<span class="nb">map</span> <span class="o">=</span> <span class="n">starry</span><span class="o">.</span><span class="n">DopplerMap</span><span class="p">(</span><span class="n">udeg</span><span class="o">=</span><span class="n">udeg</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">pm</span><span class="o">.</span><span class="n">Model</span><span class="p">()</span> <span class="k">as</span> <span class="n">model</span><span class="p">:</span>
+
+    <span class="c1"># Priors on stellar parameters</span>
+    <span class="n">A_u</span> <span class="o">=</span> <span class="n">exo</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">QuadLimbDark</span><span class="p">(</span><span class="s2">&quot;A_u&quot;</span><span class="p">,</span> <span class="n">testval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]))</span>
+    <span class="n">A_inc</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="s2">&quot;A_inc&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">)</span>
+    <span class="n">pm</span><span class="o">.</span><span class="n">Potential</span><span class="p">(</span><span class="s2">&quot;A_inc_prior&quot;</span><span class="p">,</span> <span class="n">pm</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pm</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">A_inc</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span><span class="p">)))</span>
+    <span class="n">A_obl</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="s2">&quot;A_obl&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">180.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">)</span>
+    <span class="n">A_alpha</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="s2">&quot;A_alpha&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">A_veq</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="s2">&quot;A_veq&quot;</span><span class="p">,</span> <span class="mf">4000.0</span><span class="p">,</span> <span class="mf">6000.0</span><span class="p">)</span>
+    <span class="n">A_m</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;A_m&quot;</span><span class="p">,</span> <span class="mf">0.69</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">A_r</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;A_r&quot;</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="c1"># Priors on planet parameters</span>
+    <span class="n">b_period</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;b_period&quot;</span><span class="p">,</span> <span class="mf">3.121</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+    <span class="n">b_t0</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;b_t0&quot;</span><span class="p">,</span> <span class="mf">2.005</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">b_inc</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;b_inc&quot;</span><span class="p">,</span> <span class="mf">89.55</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">b_ecc</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Beta</span><span class="p">(</span><span class="s2">&quot;b_ecc&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">b_w</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="s2">&quot;b_w&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">)</span>
+    <span class="n">b_r</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;b_r&quot;</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+    <span class="n">b_m</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Bound</span><span class="p">(</span><span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0e-4</span><span class="p">)(</span><span class="s2">&quot;b_m&quot;</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">2.0e-5</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mf">2.0e-5</span><span class="p">)</span>
+
+    <span class="c1"># Set up a Keplerian orbit for the planet</span>
+    <span class="n">orbit</span> <span class="o">=</span> <span class="n">exo</span><span class="o">.</span><span class="n">orbits</span><span class="o">.</span><span class="n">KeplerianOrbit</span><span class="p">(</span>
+        <span class="n">period</span><span class="o">=</span><span class="n">b_period</span><span class="p">,</span>
+        <span class="n">t0</span><span class="o">=</span><span class="n">b_t0</span><span class="p">,</span>
+        <span class="n">incl</span><span class="o">=</span><span class="n">b_inc</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.</span><span class="p">,</span>
+        <span class="n">m_planet</span><span class="o">=</span><span class="n">b_m</span><span class="p">,</span>
+        <span class="n">m_star</span><span class="o">=</span><span class="n">A_m</span><span class="p">,</span>
+        <span class="n">r_star</span><span class="o">=</span><span class="n">A_r</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute the RV curve</span>
+    <span class="n">orbit_model</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">get_radial_velocity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># Compute the R-M curve</span>
+    <span class="n">rm_model</span> <span class="o">=</span> <span class="nb">map</span><span class="o">.</span><span class="n">rv_op</span><span class="p">(</span>
+        <span class="n">t</span><span class="o">=</span><span class="n">t_rm</span><span class="p">,</span>
+        <span class="n">orbit</span><span class="o">=</span><span class="n">orbit</span><span class="p">,</span>
+        <span class="n">u</span><span class="o">=</span><span class="n">A_u</span><span class="p">,</span>
+        <span class="n">inc</span><span class="o">=</span><span class="n">A_inc</span><span class="p">,</span>
+        <span class="n">obl</span><span class="o">=</span><span class="n">A_obl</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">A_alpha</span><span class="p">,</span>
+        <span class="n">veq</span><span class="o">=</span><span class="n">A_veq</span><span class="p">,</span>
+        <span class="n">ro</span><span class="o">=</span><span class="n">b_r</span> <span class="o">/</span> <span class="n">A_r</span>
+    <span class="p">)</span>
+    <span class="n">rm_model_full</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">tt</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_left</span><span class="p">)),</span> <span class="n">rm_model</span><span class="p">,</span> <span class="n">tt</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_right</span><span class="p">))])</span>
+
+    <span class="c1"># The complete RV model is just the sum</span>
+    <span class="n">rv_model</span> <span class="o">=</span> <span class="n">orbit_model</span> <span class="o">+</span> <span class="n">rm_model_full</span>
+
+    <span class="c1"># Here we track the value of the model light curve for plotting later</span>
+    <span class="n">pm</span><span class="o">.</span><span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;orbit_model&quot;</span><span class="p">,</span> <span class="n">orbit_model</span><span class="p">)</span>
+    <span class="n">pm</span><span class="o">.</span><span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;rm_model&quot;</span><span class="p">,</span> <span class="n">rm_model</span><span class="p">)</span>
+    <span class="n">pm</span><span class="o">.</span><span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;rv_model&quot;</span><span class="p">,</span> <span class="n">rv_model</span><span class="p">)</span>
+
+    <span class="c1"># Save our initial guess</span>
+    <span class="n">model_guess</span> <span class="o">=</span> <span class="n">exo</span><span class="o">.</span><span class="n">eval_in_model</span><span class="p">(</span><span class="n">rv_model</span><span class="p">)</span>
+
+    <span class="c1"># The likelihood function assuming known Gaussian uncertainty</span>
+    <span class="n">pm</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="s2">&quot;obs&quot;</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">rv_model</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv_err&quot;</span><span class="p">],</span> <span class="n">observed</span><span class="o">=</span><span class="n">rv</span><span class="p">)</span>
+
+    <span class="c1"># Fit for the maximum a posteriori parameters</span>
+    <span class="n">map_soln</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">exo</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">test_point</span><span class="p">,</span> <span class="n">return_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+success: False
+initial logp: -1805687.1465121733
+final logp: 5144.680450392314
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Plot it</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">rv</span><span class="p">,</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">*</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv&quot;</span><span class="p">],</span> <span class="s2">&quot;C0-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">model_guess</span><span class="p">,</span> <span class="s2">&quot;C1--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">map_soln</span><span class="p">[</span><span class="s2">&quot;rv_model&quot;</span><span class="p">],</span> <span class="s2">&quot;C1-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Optimized&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [days]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;RV [m/s]&quot;</span><span class="p">);</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_t0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;b_t0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="n">rv</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;rv&quot;</span><span class="p">][</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="s2">&quot;C0-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="n">model_guess</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="s2">&quot;C1--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="n">map_soln</span><span class="p">[</span><span class="s2">&quot;rv_model&quot;</span><span class="p">][</span><span class="n">a</span><span class="p">:</span><span class="n">b</span><span class="p">],</span> <span class="s2">&quot;C1-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Optimized&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [days]&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<a class="reference internal image-reference" href="../_images/notebooks_RV+RM_7_0.png"><img alt="../_images/notebooks_RV+RM_7_0.png" src="../_images/notebooks_RV+RM_7_0.png" style="width: 1025px; height: 385px;" /></a>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Sample it</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">exo</span><span class="o">.</span><span class="n">PyMC3Sampler</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">finish</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">model</span><span class="p">:</span>
+    <span class="n">burnin</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">tune</span><span class="p">(</span><span class="n">tune</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">map_soln</span><span class="p">,</span> <span class="n">step_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">target_accept</span><span class="o">=</span><span class="mf">0.9</span><span class="p">))</span>
+    <span class="n">trace</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">draws</span><span class="o">=</span><span class="mi">3000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Sampling 4 chains: 100%|██████████| 308/308 [04:59&lt;00:00,  2.55s/draws]
+Sampling 4 chains: 100%|██████████| 408/408 [06:19&lt;00:00,  2.61s/draws]
+Sampling 4 chains: 100%|██████████| 808/808 [09:05&lt;00:00,  2.40s/draws]
+Sampling 4 chains: 100%|██████████| 1608/1608 [03:23&lt;00:00,  2.47draws/s]
+Sampling 4 chains: 100%|██████████| 6908/6908 [14:46&lt;00:00,  2.31draws/s]
+Sampling 4 chains: 100%|██████████| 808/808 [02:23&lt;00:00,  2.60draws/s]
+Multiprocess sampling (4 chains in 4 jobs)
+NUTS: [b_m, b_r, b_w, b_ecc, b_inc, b_t0, b_period, A_r, A_m, A_veq, A_alpha, A_obl, A_inc, A_u]
+Sampling 4 chains: 100%|██████████| 12000/12000 [23:58&lt;00:00,  2.47draws/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A_u&quot;</span><span class="p">,</span> <span class="s2">&quot;A_inc&quot;</span><span class="p">,</span> <span class="s2">&quot;A_obl&quot;</span><span class="p">,</span> <span class="s2">&quot;A_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;A_veq&quot;</span><span class="p">,</span> <span class="s2">&quot;A_m&quot;</span><span class="p">,</span> <span class="s2">&quot;A_r&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;b_period&quot;</span><span class="p">,</span> <span class="s2">&quot;b_t0&quot;</span><span class="p">,</span> <span class="s2">&quot;b_inc&quot;</span><span class="p">,</span> <span class="s2">&quot;b_ecc&quot;</span><span class="p">,</span> <span class="s2">&quot;b_w&quot;</span><span class="p">,</span> <span class="s2">&quot;b_r&quot;</span><span class="p">,</span> <span class="s2">&quot;b_m&quot;</span><span class="p">]</span>
+<span class="n">pm</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="n">varnames</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean</th>
+      <th>sd</th>
+      <th>mc_error</th>
+      <th>hpd_2.5</th>
+      <th>hpd_97.5</th>
+      <th>n_eff</th>
+      <th>Rhat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>A_u__0</th>
+      <td>0.236915</td>
+      <td>1.529104e-01</td>
+      <td>2.227156e-03</td>
+      <td>2.181536e-04</td>
+      <td>0.510830</td>
+      <td>4504.093900</td>
+      <td>1.000056</td>
+    </tr>
+    <tr>
+      <th>A_u__1</th>
+      <td>0.446121</td>
+      <td>1.696209e-01</td>
+      <td>2.091849e-03</td>
+      <td>1.025865e-01</td>
+      <td>0.737133</td>
+      <td>6653.929754</td>
+      <td>0.999977</td>
+    </tr>
+    <tr>
+      <th>A_inc</th>
+      <td>72.830370</td>
+      <td>6.179195e+00</td>
+      <td>9.980882e-02</td>
+      <td>5.908473e+01</td>
+      <td>81.887189</td>
+      <td>3164.740264</td>
+      <td>1.000255</td>
+    </tr>
+    <tr>
+      <th>A_obl</th>
+      <td>32.579905</td>
+      <td>4.504635e+00</td>
+      <td>5.470826e-02</td>
+      <td>2.385745e+01</td>
+      <td>41.521478</td>
+      <td>7261.365514</td>
+      <td>1.000080</td>
+    </tr>
+    <tr>
+      <th>A_alpha</th>
+      <td>0.534316</td>
+      <td>2.159809e-01</td>
+      <td>3.046251e-03</td>
+      <td>1.697961e-01</td>
+      <td>0.944842</td>
+      <td>3411.812129</td>
+      <td>1.000212</td>
+    </tr>
+    <tr>
+      <th>A_veq</th>
+      <td>5423.049820</td>
+      <td>3.931507e+02</td>
+      <td>5.198668e+00</td>
+      <td>4.698673e+03</td>
+      <td>5999.220901</td>
+      <td>5125.342999</td>
+      <td>1.000493</td>
+    </tr>
+    <tr>
+      <th>A_m</th>
+      <td>0.694202</td>
+      <td>9.119066e-03</td>
+      <td>7.684281e-05</td>
+      <td>6.769686e-01</td>
+      <td>0.712476</td>
+      <td>14384.972733</td>
+      <td>0.999963</td>
+    </tr>
+    <tr>
+      <th>A_r</th>
+      <td>1.000250</td>
+      <td>4.853056e-03</td>
+      <td>3.955106e-05</td>
+      <td>9.906272e-01</td>
+      <td>1.009603</td>
+      <td>14446.468850</td>
+      <td>0.999868</td>
+    </tr>
+    <tr>
+      <th>b_period</th>
+      <td>3.120736</td>
+      <td>3.702597e-04</td>
+      <td>2.626256e-06</td>
+      <td>3.120018e+00</td>
+      <td>3.121464</td>
+      <td>17020.649865</td>
+      <td>1.000040</td>
+    </tr>
+    <tr>
+      <th>b_t0</th>
+      <td>2.000067</td>
+      <td>8.511192e-05</td>
+      <td>7.402882e-07</td>
+      <td>1.999904e+00</td>
+      <td>2.000233</td>
+      <td>13854.279747</td>
+      <td>1.000219</td>
+    </tr>
+    <tr>
+      <th>b_inc</th>
+      <td>89.465263</td>
+      <td>8.431427e-02</td>
+      <td>9.362084e-04</td>
+      <td>8.929653e+01</td>
+      <td>89.625766</td>
+      <td>10073.488087</td>
+      <td>0.999913</td>
+    </tr>
+    <tr>
+      <th>b_ecc</th>
+      <td>0.143208</td>
+      <td>1.640675e-01</td>
+      <td>1.134273e-03</td>
+      <td>1.567363e-10</td>
+      <td>0.500596</td>
+      <td>18310.501213</td>
+      <td>1.000022</td>
+    </tr>
+    <tr>
+      <th>b_w</th>
+      <td>179.250388</td>
+      <td>1.032131e+02</td>
+      <td>7.710881e-01</td>
+      <td>6.682239e+00</td>
+      <td>346.725055</td>
+      <td>17973.500710</td>
+      <td>0.999940</td>
+    </tr>
+    <tr>
+      <th>b_r</th>
+      <td>0.020572</td>
+      <td>7.764276e-04</td>
+      <td>7.890487e-06</td>
+      <td>1.909992e-02</td>
+      <td>0.022098</td>
+      <td>8294.607827</td>
+      <td>1.000511</td>
+    </tr>
+    <tr>
+      <th>b_m</th>
+      <td>0.000030</td>
+      <td>2.620151e-07</td>
+      <td>2.202355e-09</td>
+      <td>2.935431e-05</td>
+      <td>0.000030</td>
+      <td>14433.095283</td>
+      <td>0.999968</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">corner</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">trace_to_dataframe</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="n">varnames</span><span class="p">)</span>
+<span class="n">truths_vals</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="s2">&quot;A_u&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">truths</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">varnames</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+<span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">truths</span><span class="o">=</span><span class="n">truths_vals</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<a class="reference internal image-reference" href="../_images/notebooks_RV+RM_10_0.png"><img alt="../_images/notebooks_RV+RM_10_0.png" src="../_images/notebooks_RV+RM_10_0.png" style="width: 3254px; height: 3267px;" /></a>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Rodrigo Luger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0.dev1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="../None"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

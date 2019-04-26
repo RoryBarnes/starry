@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['unitvector',['UnitVector',['../namespacestarry_1_1utils.html#a54fd97e8f2397f0f312d98ff314fcfa1',1,'starry::utils']]],
+  ['utype',['UType',['../structstarry_1_1utils_1_1MapType_3_01T_00_01false_00_01TEMPORAL_00_01REFLECTED_00_01false_01_4.html#a16b71d22cce900155672a77dae619dca',1,'starry::utils::MapType&lt; T, false, TEMPORAL, REFLECTED, false &gt;::UType()'],['../structstarry_1_1utils_1_1MapType_3_01T_00_01true_00_01false_00_01REFLECTED_00_01false_01_4.html#a4a7e04b056b1403b95019e9441bf1312',1,'starry::utils::MapType&lt; T, true, false, REFLECTED, false &gt;::UType()'],['../structstarry_1_1utils_1_1MapType_3_01T_00_01false_00_01false_00_01false_00_01true_01_4.html#a6dc643e5698b2ea6d3d2caedd069ed9f',1,'starry::utils::MapType&lt; T, false, false, false, true &gt;::UType()'],['../structstarry_1_1utils_1_1MapType_3_01T_00_01true_00_01false_00_01false_00_01true_01_4.html#a27dc8f4d8426fb43bd2d5bd3613e8dcf',1,'starry::utils::MapType&lt; T, true, false, false, true &gt;::UType()'],['../classMap.html#af87098be3d612ea02521ef88e3860bfa',1,'Map::UType()']]]
+];
